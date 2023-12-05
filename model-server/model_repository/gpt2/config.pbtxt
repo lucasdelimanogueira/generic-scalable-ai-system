@@ -1,0 +1,28 @@
+name: "gpt2"
+backend: "python"
+max_batch_size: 80
+
+dynamic_batching { 
+  max_queue_delay_microseconds: 500000
+}
+
+input [
+  {
+    name: "input_text"
+    data_type: TYPE_STRING
+    dims: [1]
+  }
+]
+output [
+  {
+    name: "output_text"
+    data_type: TYPE_STRING
+    dims: [1]
+  }
+]
+
+instance_group [
+  {
+    kind: KIND_GPU
+  }
+]
