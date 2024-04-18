@@ -10,8 +10,5 @@ COPY model_repository /models
 # Command to start the Triton server
 CMD ["tritonserver", "--model-repository=/models"]
 
-<<<<<<< HEAD
-=======
 # Expose port
->>>>>>> df31064e46fab9ef8bc1dcc2c73cc1930b5e2f1f
 EXPOSE 8000
