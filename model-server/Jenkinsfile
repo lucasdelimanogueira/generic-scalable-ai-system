@@ -24,7 +24,7 @@ pipeline {
 
                     try {
                         // check if the triton server service started correctly  
-                        def maxRetries = 3  
+                        def maxRetries = 2 
                         def retryInterval = 10  
                         def retries = 0
                         def serviceReady = false
@@ -48,7 +48,7 @@ pipeline {
                         }
                     } finally {
                         // Stop and remove the container
-                        sh "docker stop $containerId"
+                        //sh "docker stop $containerId"
                         //sh "docker rmi $docker_registry:$BUILD_ID"
                     } 
                 }
