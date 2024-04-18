@@ -32,9 +32,9 @@ pipeline {
                         sleep retryInterval
                         
                         while (!serviceReady && retries < maxRetries) {
-                            def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true).trim()
+                            def healthcheckResponse = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true).trim()
 
-                            if (curlOutput == "200") {
+                            if (healthCheckResponse == "200") {
                                 echo "Service is ready!"
                                 serviceReady = true
                             } else {
@@ -48,9 +48,9 @@ pipeline {
                             error "Service did not become ready within the specified timeout"
                         }
 
-                        def testResponse = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" --location --request POST 'http://localhost:8000/v2/models/gpt2/versions/1/infer' --data-raw '{\"inputs\":[{\"name\":\"input_text\",\"shape\":[1, 1],\"datatype\":\"BYTES\",\"data\":[\"The earth is\"]}],\"outputs\":[{\"name\": \"output_text\"}]}'", returnStdout: true).trim()
-                
-                        if (testResponse == "200") {
+                        def testServiceResponse = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" --location --request POST 'http://localhost:8000/v2/models/gpt2/versions/1/infer' --data-raw '{\"inputs\":[{\"name\":\"input_text\",\"shape\":[1, 1],\"datatype\":\"BYTES\",\"data\":[\"The earth is\"]}],\"outputs\":[{\"name\": \"output_text\"}]}'", returnStdout: true).trim()
+                        echo "testServiceResponse" + testResponse
+                        if (testServiceResponse == "200") {
                             echo "Service test passed successfully!"
                         } else {
                             error "Service test failed"
