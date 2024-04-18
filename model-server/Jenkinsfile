@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     // run the container
-                    def containerId = sh(script: "docker run -d --shm-size 1g --net=host -v $./model_repository:/models $docker_registry:$BUILD_ID", returnStdout: true).trim()
+                    def containerId = sh(script: "docker run -d --shm-size 1g --net=host -v ./model_repository:/models $docker_registry:$BUILD_ID", returnStdout: true).trim()
                     
                     try {
                         // check if the triton server service started correctly  
