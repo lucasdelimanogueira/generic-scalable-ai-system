@@ -5,7 +5,7 @@ pipeline {
         stage ('Build Image') {
             steps {
                 script {
-                    docker = docker.build("lucasdelimanogueira/generic-scalable-ai-system", "-f model-server/Dockerfile")
+                    docker = docker.build("lucasdelimanogueira/generic-scalable-ai-system", "-f ./model-server/Dockerfile ./model-server")
                 }
             }
         }
