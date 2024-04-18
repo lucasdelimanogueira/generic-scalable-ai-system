@@ -9,3 +9,5 @@ COPY model_repository /models
 
 # Command to start the Triton server
 CMD ["tritonserver", "--model-repository=/models"]
+
+EXPOSE 8000
