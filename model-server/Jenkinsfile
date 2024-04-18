@@ -47,6 +47,15 @@ pipeline {
                         if (!serviceReady) {
                             error "Service did not become ready within the specified timeout"
                         }
+
+                        def testResponse = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" --location --request POST 'http://localhost:8000/v2/models/gpt2/versions/1/infer' --data-raw '{\"inputs\":[{\"name\":\"input_text\",\"shape\":[1, 1],\"datatype\":\"BYTES\",\"data\":[\"The earth is\"]}],\"outputs\":[{\"name\": \"output_text\"}]}'", returnStdout: true).trim()
+                
+                        if (testResponse == "200") {
+                            echo "Service test passed successfully!"
+                        } else {
+                            error "Service test failed"
+                        }
+
                     } finally {
                         // Stop and remove the container
                         sh "docker stop $containerId"
