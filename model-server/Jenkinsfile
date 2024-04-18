@@ -19,7 +19,7 @@ pipeline {
             steps {
                 script {
                     // run the container
-                    def containerId = sh(script: "docker run -d --shm-size 1g --net=host -v ./model_repository:/models $docker_registry:$BUILD_ID", returnStdout: true, returnStderr: true)
+                    sh "docker run -d --shm-size 1g --net=host -v ${PWD}/model_repository:/models $docker_registry:$BUILD_ID"
                     
                     try {
                         // check if the triton server service started correctly  
@@ -47,7 +47,8 @@ pipeline {
                         }
                     } finally {
                         // Stop and remove the container
-                        sh "docker stop $containerId"
+                        sh "docker ps -f name=$docker_registry:$BUILD_ID -q | xargs --no-run-if-empty docker container stop"
+                        sh "docker container ls -a -fname=$docker_registry:$BUILD_ID -q | xargs -r docker container rm"
                         //sh "docker rmi $docker_registry:$BUILD_ID"
                     } 
                 }
