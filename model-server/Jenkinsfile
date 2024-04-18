@@ -48,7 +48,7 @@ pipeline {
                         }
                     } finally {
                         // Stop and remove the container
-                        sh "docker stop $containerId"
+                        //sh "docker stop $containerId"
                         //sh "docker rmi $docker_registry:$BUILD_ID"
                     } 
                 }
