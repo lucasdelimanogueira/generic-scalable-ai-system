@@ -26,7 +26,9 @@ pipeline {
                     def retryInterval = 10  
                     def retries = 0
                     def serviceReady = false
-
+                    
+                    sleep retryInterval
+                    
                     while (!serviceReady && retries < maxRetries) {
                         def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true).trim()
                         if (curlOutput == "200") {
