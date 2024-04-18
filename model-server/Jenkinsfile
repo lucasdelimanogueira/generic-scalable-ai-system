@@ -28,7 +28,7 @@ pipeline {
                     def serviceReady = false
                     
                     sleep retryInterval
-                    
+
                     while (!serviceReady && retries < maxRetries) {
                         def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true).trim()
                         if (curlOutput == "200") {
@@ -43,6 +43,8 @@ pipeline {
 
                     if (!serviceReady) {
                         error "Service did not become ready within the specified timeout"
+                        sh "docker stop $docker_registry:${env.BUILD_ID}"
+                        sh "docker rmi $docker_registry:$BUILD_ID"
                     }
                 }
             }
