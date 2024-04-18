@@ -33,7 +33,7 @@ pipeline {
                         
                         while (!serviceReady && retries < maxRetries) {
                             def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true).trim()
-                            echo curlOutput + "kkkkkkkkkkkkk"
+
                             if (curlOutput == "200") {
                                 echo "Service is ready!"
                                 serviceReady = true
