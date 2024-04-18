@@ -2,9 +2,9 @@ pipeline {
     agent any
 
     stages {
-        stage ("Start") {
+        stage ('Build Image') {
             steps {
-                echo "Starting pipeline"
+                docker = docker.build("lucasdelimanogueira/generic-scalable-ai-system", '-f ./model-server/Dockerfile ./model-server')
             }
         }
     }
