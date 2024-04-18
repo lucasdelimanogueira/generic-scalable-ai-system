@@ -19,31 +19,38 @@ pipeline {
             steps {
                 script {
                     // run the container
-                    sh "docker run -d --shm-size 1g --net=host -v ${PWD}/model_repository:/models $docker_registry:$BUILD_ID"
-
-                    // check if the triton server service started correctly  
-                    def maxRetries = 2  
-                    def retryInterval = 10  
-                    def retries = 0
-                    def serviceReady = false
-
-                    sleep retryInterval
+                    def containerId = sh(script: "docker run -d --shm-size 1g --net=host -v ${PWD}/model_repository:/models $docker_registry:$BUILD_ID", returnStdout: true)
+                    sh "docker logs $containerId"
                     
-                    while (!serviceReady && retries < maxRetries) {
-                        def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true, returnStatus: true)
-                        if (curlOutput == "200") {
-                            echo "Service is ready!"
-                            serviceReady = true
-                        } else {
-                            echo "Service is not yet ready, waiting for $retryInterval seconds before retrying..."
-                            sleep retryInterval
-                            retries++
-                        }
-                    }
+                    try {
+                        // check if the triton server service started correctly  
+                        def maxRetries = 2  
+                        def retryInterval = 10  
+                        def retries = 0
+                        def serviceReady = false
 
-                    if (!serviceReady) {
-                        error "Service did not become ready within the specified timeout"
-                    }
+                        sleep retryInterval
+                        
+                        while (!serviceReady && retries < maxRetries) {
+                            def curlOutput = sh(script: "curl -s -o /dev/null -w \"%{http_code}\" localhost:8000/v2/health/ready", returnStdout: true, returnStatus: true)
+                            if (curlOutput == "200") {
+                                echo "Service is ready!"
+                                serviceReady = true
+                            } else {
+                                echo "Service is not yet ready, waiting for $retryInterval seconds before retrying..."
+                                sleep retryInterval
+                                retries++
+                            }
+                        }
+
+                        if (!serviceReady) {
+                            error "Service did not become ready within the specified timeout"
+                        }
+                    } finally {
+                        // Stop and remove the container
+                        sh "docker stop $containerId"
+                        //sh "docker rmi $docker_registry:$BUILD_ID"
+                    } 
                 }
             }
         }
